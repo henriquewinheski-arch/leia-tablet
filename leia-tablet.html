@@ -25,9 +25,7 @@
     --lx-text-dimmer: rgba(226,208,250,0.4);
     --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   html, body {
     width: 100%; min-height: 100vh;
     font-family: 'Poppins', sans-serif;
@@ -35,7 +33,6 @@
     color: #fff;
     overflow-x: hidden;
   }
-
   /* ── TELAS ── */
   .screen {
     display: none;
@@ -51,7 +48,6 @@
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   /* ── LOGO FIXA ── */
   .logo-bar {
     position: fixed; top: 0; left: 0; right: 0;
@@ -63,7 +59,6 @@
     z-index: 100;
   }
   .logo-bar svg { height: 22px; width: auto; }
-
   /* ── CARD ── */
   .card {
     background: rgba(45,8,93,0.35);
@@ -74,18 +69,17 @@
     backdrop-filter: blur(16px);
     text-align: center;
   }
-
   /* ── TELA 1 — BOAS-VINDAS LÉIA ── */
   .leia-avatar {
-    width: 72px; height: 72px;
-    background: linear-gradient(135deg, var(--lx-primary-pure), var(--lx-primary-light));
+    width: 96px; height: 96px;
     border-radius: 50%;
+    overflow: hidden;
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 20px;
+    border: 2px solid var(--lx-border-medium);
     box-shadow: 0 0 32px rgba(102,19,208,0.4);
   }
-  .leia-avatar svg { width: 36px; height: 36px; color: #fff; }
-
+  .leia-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .leia-greeting {
     font-size: clamp(11px, 2vw, 13px);
     font-weight: 600;
@@ -108,14 +102,12 @@
     line-height: 1.6;
     margin-bottom: 32px;
   }
-
   .divider {
     width: 40px; height: 2px;
     background: linear-gradient(90deg, var(--lx-primary-pure), var(--lx-secondary-pure));
     border-radius: 2px;
     margin: 0 auto 28px;
   }
-
   /* ── INPUT CPF ── */
   .input-label {
     font-size: 12px; font-weight: 600;
@@ -150,7 +142,6 @@
     border-color: var(--lx-secondary-pure);
     background: rgba(255,255,255,0.1);
   }
-
   /* ── BOTÃO PRIMARY ── */
   .btn-primary {
     width: 100%; height: 56px;
@@ -167,7 +158,6 @@
   .btn-primary:hover { background: #FD8101; }
   .btn-primary:active { transform: scale(0.98); }
   .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-
   /* ── LOADER ── */
   .loader {
     display: none; width: 32px; height: 32px;
@@ -179,7 +169,6 @@
   }
   .loader.show { display: block; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   /* ── ERRO ── */
   .error-msg {
     display: none; margin-top: 14px;
@@ -189,7 +178,6 @@
     color: #FCA5A5; font-size: 14px; line-height: 1.5;
   }
   .error-msg.show { display: block; }
-
   /* ── TELA 2 — CHECK-IN CONFIRMADO ── */
   .checkin-icon {
     width: 64px; height: 64px;
@@ -205,7 +193,6 @@
     from { transform: scale(0.4); opacity: 0; }
     to   { transform: scale(1); opacity: 1; }
   }
-
   .welcome-greeting {
     font-size: clamp(11px, 2vw, 12px);
     font-weight: 600; text-transform: uppercase;
@@ -228,7 +215,6 @@
     line-height: 1.6;
     margin-bottom: 24px;
   }
-
   .host-box {
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--lx-border-subtle);
@@ -253,7 +239,6 @@
     font-size: clamp(16px, 4vw, 20px);
     font-weight: 600; color: var(--lx-secondary-pure);
   }
-
   .status-bar {
     display: flex; align-items: center; gap: 10px;
     background: rgba(34,197,94,0.08);
@@ -272,7 +257,6 @@
     0%,100% { opacity:1; transform:scale(1); }
     50% { opacity:0.4; transform:scale(0.75); }
   }
-
   /* ── TELA 3 — NÃO ENCONTRADO ── */
   .notfound-icon {
     width: 64px; height: 64px;
@@ -283,14 +267,12 @@
     margin: 0 auto 20px;
   }
   .notfound-icon svg { width: 28px; height: 28px; color: var(--lx-secondary-pure); }
-
   .status-bar.warn {
     background: rgba(254,143,28,0.08);
     border-color: rgba(254,143,28,0.2);
     color: #FEB366;
   }
   .status-bar.warn .pulse-dot { background: #FEB366; }
-
   /* ── BOTÃO SECUNDÁRIO ── */
   .btn-ghost {
     background: transparent;
@@ -301,7 +283,6 @@
     transition: border-color 0.2s, color 0.2s;
   }
   .btn-ghost:hover { border-color: rgba(226,208,250,0.45); color: rgba(226,208,250,0.9); }
-
   /* ── RODAPÉ ── */
   .footer {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -319,7 +300,6 @@
 </style>
 </head>
 <body>
-
 <!-- LOGO BAR -->
 <div class="logo-bar">
   <svg width="140" height="22" viewBox="0 0 197 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -341,27 +321,19 @@
     <path fill-rule="evenodd" clip-rule="evenodd" d="M69.286 7.655H72.441V22.881C72.441 27.511 69.814 30 64.632 30C62.341 30 60.31 29.332 58.505 27.885L60.446 25.379C62.328 26.859 64.696 26.859 64.696 26.859C67.599 26.859 69.286 25.46 69.286 23.131V21.651C68.053 22.492 66.584 22.915 64.897 22.915C62.711 22.915 60.894 22.204 59.479 20.798C58.065 19.395 57.349 17.583 57.349 15.408C57.349 13.234 58.065 11.424 59.479 10.018C60.892 8.612 62.711 7.901 64.897 7.901C66.585 7.901 68.053 8.326 69.286 9.167V7.655ZM69.286 16.2C69.144 17.133 68.745 17.933 68.09 18.585C67.256 19.414 66.185 19.835 64.897 19.835C63.609 19.835 62.536 19.414 61.704 18.585C60.872 17.756 60.451 16.685 60.451 15.397C60.451 14.109 60.872 13.038 61.704 12.231C62.536 11.402 63.609 10.981 64.897 10.981C66.185 10.981 67.256 11.402 68.09 12.231C68.744 12.883 69.144 13.681 69.286 14.614V16.2Z" fill="white"/>
   </svg>
 </div>
-
 <!-- ════ TELA 1 — BOAS-VINDAS LÉIA ════ -->
 <div class="screen active" id="screen-inicio">
   <div class="card">
     <div class="leia-avatar">
-      <!-- Sparkle / IA icon -->
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/>
-        <path d="M19 16L19.75 18.25L22 19L19.75 19.75L19 22L18.25 19.75L16 19L18.25 18.25L19 16Z"/>
-      </svg>
+      <img src="leia-avatar-v2.png" alt="LÉIA, recepcionista virtual">
     </div>
-
     <div class="leia-greeting">Olá, eu sou a</div>
     <div class="leia-name">LÉ<span>IA</span></div>
     <div class="leia-desc">
       Sua recepcionista virtual da Logcomex.<br>
       Para fazer seu check-in, digite seu CPF abaixo.
     </div>
-
     <div class="divider"></div>
-
     <div class="input-label">Seu CPF</div>
     <input
       class="input-cpf"
@@ -375,12 +347,10 @@
     <button class="btn-primary" id="btn-checkin" onclick="fazerCheckin()">
       Confirmar check-in
     </button>
-
     <div class="loader" id="loader"></div>
     <div class="error-msg" id="error-msg"></div>
   </div>
 </div>
-
 <!-- ════ TELA 2 — CHECK-IN CONFIRMADO ════ -->
 <div class="screen" id="screen-welcome">
   <div class="card">
@@ -389,16 +359,13 @@
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
-
     <div class="welcome-greeting">Check-in realizado</div>
     <div class="welcome-name" id="welcome-name">Olá!</div>
     <div class="welcome-empresa" id="welcome-empresa-visitante"></div>
-
     <div class="welcome-msg">
       Seja muito bem-vindo(a) à <strong style="color:#fff">Logcomex</strong>.<br>
       Seu anfitrião já foi notificado e virá até você em breve.
     </div>
-
     <div class="host-box">
       <div class="host-avatar" id="host-initial">H</div>
       <div class="host-info">
@@ -406,16 +373,13 @@
         <div class="host-name" id="welcome-host">—</div>
       </div>
     </div>
-
     <div class="status-bar">
       <div class="pulse-dot"></div>
       <span>Aguarde na recepção — ele(a) virá buscá-lo(a) em breve.</span>
     </div>
-
     <button class="btn-ghost" onclick="voltarInicio()">← Novo check-in</button>
   </div>
 </div>
-
 <!-- ════ TELA 3 — NÃO ENCONTRADO ════ -->
 <div class="screen" id="screen-notfound">
   <div class="card">
@@ -424,30 +388,24 @@
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
     </div>
-
     <div class="welcome-greeting" style="margin-bottom:8px">Cadastro não encontrado</div>
     <div class="welcome-msg" style="margin-bottom:24px">
       Não localizamos seu CPF na lista de visitantes esperados.<br>
       Nossa equipe de Facilities irá atendê-lo(a) em instantes.
     </div>
-
     <div class="status-bar warn">
       <div class="pulse-dot"></div>
       <span>Aguarde — a equipe foi notificada e virá até você.</span>
     </div>
-
     <button class="btn-ghost" onclick="voltarInicio()">← Tentar novamente</button>
   </div>
 </div>
-
 <!-- RODAPÉ -->
 <div class="footer">
   <span><b>LÉIA</b> · Logcomex Experience &amp; Intelligent Access</span>
 </div>
-
 <script>
 const WEBHOOK_URL = 'https://ramonlogcomex.app.n8n.cloud/webhook/leia-checkin';
-
 // Máscara CPF
 document.getElementById('cpf-input').addEventListener('input', function(e) {
   let v = e.target.value.replace(/\D/g,'');
@@ -457,32 +415,27 @@ document.getElementById('cpf-input').addEventListener('input', function(e) {
   else if (v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
   e.target.value = v;
 });
-
 document.getElementById('cpf-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') fazerCheckin();
 });
-
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   el.classList.add('active');
   window.scrollTo(0,0);
 }
-
 async function fazerCheckin() {
   const cpfRaw = document.getElementById('cpf-input').value.replace(/\D/g,'');
   const cpfFmt = document.getElementById('cpf-input').value;
   const btn = document.getElementById('btn-checkin');
   const loader = document.getElementById('loader');
   const errEl = document.getElementById('error-msg');
-
   if (cpfRaw.length < 11) {
     errEl.textContent = 'Por favor, digite seu CPF completo (11 dígitos).';
     errEl.classList.add('show'); return;
   }
   errEl.classList.remove('show');
   btn.disabled = true; loader.classList.add('show');
-
   try {
     const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
@@ -490,28 +443,22 @@ async function fazerCheckin() {
       body: JSON.stringify({cpf: cpfFmt})
     });
     const data = await res.json();
-
     if (data.encontrado) {
       // Nome — primeiro nome
       const primeiroNome = (data.nome_visitante||'').split(' ')[0];
       document.getElementById('welcome-name').textContent = 'Olá, ' + primeiroNome + '!';
-
       // Empresa do visitante
       const empEl = document.getElementById('welcome-empresa-visitante');
       empEl.textContent = data.empresa_visitante || '';
       empEl.style.display = data.empresa_visitante ? 'block' : 'none';
-
       // Anfitrião — formatar nome
       const hostRaw = data.nome_anfitriao || '';
       const hostFmt = hostRaw.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
       document.getElementById('welcome-host').textContent = hostFmt || hostRaw;
-
       // Inicial do avatar
       document.getElementById('host-initial').textContent = (hostFmt || hostRaw).charAt(0).toUpperCase();
-
       showScreen('screen-welcome');
       setTimeout(voltarInicio, 60000);
-
     } else {
       showScreen('screen-notfound');
       setTimeout(voltarInicio, 30000);
@@ -523,14 +470,12 @@ async function fazerCheckin() {
     btn.disabled = false; loader.classList.remove('show');
   }
 }
-
 function voltarInicio() {
   document.getElementById('cpf-input').value = '';
   document.getElementById('error-msg').classList.remove('show');
   showScreen('screen-inicio');
   setTimeout(() => document.getElementById('cpf-input').focus(), 300);
 }
-
 window.addEventListener('load', () => setTimeout(() => document.getElementById('cpf-input').focus(), 500));
 </script>
 </body>
