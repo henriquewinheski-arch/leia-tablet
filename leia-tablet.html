@@ -234,6 +234,13 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     font-size: 18px; font-weight: 700; color: #fff;
+    overflow: hidden;
+  }
+  .host-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
   }
   .host-info { flex: 1; }
   .host-label {
@@ -461,8 +468,14 @@ async function fazerCheckin() {
       const hostRaw = data.nome_anfitriao || '';
       const hostFmt = hostRaw.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
       document.getElementById('welcome-host').textContent = hostFmt || hostRaw;
-      // Inicial do avatar
-      document.getElementById('host-initial').textContent = (hostFmt || hostRaw).charAt(0).toUpperCase();
+      // Avatar do anfitrião — foto do Slack se houver, senão inicial
+      const avatarEl = document.getElementById('host-initial');
+      const inicial = (hostFmt || hostRaw).charAt(0).toUpperCase();
+      if (data.foto_anfitriao) {
+        avatarEl.innerHTML = '<img src="' + data.foto_anfitriao + '" alt="" onerror="this.parentNode.textContent=\'' + inicial + '\'">';
+      } else {
+        avatarEl.textContent = inicial;
+      }
       showScreen('screen-welcome');
       setTimeout(voltarInicio, 60000);
     } else {
