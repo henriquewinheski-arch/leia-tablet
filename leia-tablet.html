@@ -69,40 +69,22 @@
     backdrop-filter: blur(16px);
     text-align: center;
   }
-  /* ── TELA 1 — BOAS-VINDAS LÉIA ── */
-  .leia-avatar {
-    position: relative;
-    width: 110px; height: 110px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    border: 2px solid var(--lx-border-medium);
-    box-shadow: 0 0 32px rgba(102,19,208,0.4);
-    background: rgba(255,255,255,0.04);
-  }
-  .leia-avatar .avatar-clip {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
+  /* ── TELA 1 — BOAS-VINDAS LÉIA (vídeo em destaque) ── */
+  .leia-video-wrap {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 24px;
+    border-radius: 18px;
     overflow: hidden;
+    border: 1px solid var(--lx-border-medium);
+    box-shadow: 0 8px 40px rgba(102,19,208,0.35);
+    background: rgba(255,255,255,0.04);
+    line-height: 0;
   }
-  .leia-avatar img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center 12%;
+  .leia-video-wrap video {
+    width: 100%;
+    height: auto;
     display: block;
-    transform-origin: center 14%;
-    animation: leiaAfasta 7s var(--ease-out) infinite;
-  }
-  @keyframes leiaAfasta {
-    0%   { transform: scale(1.85); }
-    30%  { transform: scale(1.85); }
-    55%  { transform: scale(1); }
-    80%  { transform: scale(1); }
-    100% { transform: scale(1.85); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .leia-avatar img { animation: none; }
   }
   .leia-greeting {
     font-size: clamp(11px, 2vw, 13px);
@@ -348,15 +330,13 @@
 <!-- ════ TELA 1 — BOAS-VINDAS LÉIA ════ -->
 <div class="screen active" id="screen-inicio">
   <div class="card">
-    <div class="leia-avatar">
-      <div class="avatar-clip">
-        <img src="leia-avatar-v2.png" alt="LÉIA, recepcionista virtual">
-      </div>
+    <div class="leia-video-wrap">
+      <video src="leia-video.mp4" autoplay loop muted playsinline></video>
     </div>
     <div class="leia-greeting">Olá, eu sou a</div>
     <div class="leia-name">LÉ<span>IA</span></div>
     <div class="leia-desc">
-      Sua recepcionista virtual da Logcomex.<br>
+      Recepcionista virtual da Logcomex.<br>
       Para fazer seu check-in, digite seu CPF abaixo.
     </div>
     <div class="divider"></div>
