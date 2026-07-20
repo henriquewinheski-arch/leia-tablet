@@ -94,6 +94,14 @@
   .tap-logo {
     margin-bottom: 40px;
   }
+  .tap-eyebrow {
+    font-size: clamp(13px, 2.5vw, 16px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--lx-secondary-pure);
+    margin-bottom: 18px;
+  }
   .tap-logo svg { width: min(72vw, 340px); height: auto; }
   .tap-pulse-ring {
     width: 96px; height: 96px;
@@ -380,6 +388,7 @@
 </div>
 <!-- ════ TELA 0 — TOQUE PARA SER ATENDIDO ════ -->
 <div class="screen active" id="screen-tap" onclick="iniciarAtendimento()">
+  <div class="tap-eyebrow">Recepção Digital</div>
   <div class="tap-logo">
     <svg width="280" height="42" viewBox="0 0 197 30" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M170.124 20.0846H167.091V23.1403H170.124V20.0846Z" fill="white"/>
@@ -417,7 +426,7 @@
 <div class="screen" id="screen-inicio">
   <div class="card">
     <div class="leia-video-wrap">
-      <video id="leia-video" src="leia-video.mp4" playsinline></video>
+      <video id="leia-video" playsinline muted preload="none" data-src="leia-video.mp4"></video>
     </div>
     <div class="leia-greeting">Olá, eu sou a</div>
     <div class="leia-name">LÉ<span>IA</span></div>
@@ -500,7 +509,36 @@
 </div>
 <script>
 const WEBHOOK_URL = 'https://ramonlogcomex.app.n8n.cloud/webhook/leia-checkin';
-// Máscara CPF
+
+// ── Som de clique (Web Audio, sem arquivo externo) ──
+let audioCtx = null;
+function tocarClique() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = 520;
+    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.06);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + 0.06);
+  } catch(e) {}
+}
+
+// ── Timer de inatividade: volta à tela inicial após 20s ──
+const TEMPO_INATIVIDADE = 20000;
+let timerInatividade = null;
+function agendarVolta() {
+  clearTimeout(timerInatividade);
+  timerInatividade = setTimeout(voltarInicio, TEMPO_INATIVIDADE);
+}
+function cancelarVolta() {
+  clearTimeout(timerInatividade);
+}
+
+// Máscara CPF + som de clique + reinicia timer a cada tecla
 document.getElementById('cpf-input').addEventListener('input', function(e) {
   let v = e.target.value.replace(/\D/g,'');
   if (v.length > 11) v = v.slice(0,11);
@@ -508,6 +546,8 @@ document.getElementById('cpf-input').addEventListener('input', function(e) {
   else if (v.length > 6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
   else if (v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
   e.target.value = v;
+  tocarClique();
+  agendarVolta(); // zera o timer a cada tecla digitada
 });
 document.getElementById('cpf-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') fazerCheckin();
@@ -530,11 +570,17 @@ leiaVideo.addEventListener('ended', revelarCpf);
 function revelarCpf() {
   document.getElementById('cpf-area').classList.add('revealed');
   setTimeout(() => document.getElementById('cpf-input').focus(), 400);
+  agendarVolta(); // inicia contagem de 20s (zera a cada tecla)
 }
-// Toque na tela inicial → vai para o vídeo e toca com som
+// Toque na tela inicial → carrega o vídeo, vai para a tela e toca com som
 function iniciarAtendimento() {
   showScreen('screen-inicio');
+  cancelarVolta(); // sem timer enquanto o vídeo fala; começa ao revelar o CPF
   document.getElementById('cpf-area').classList.remove('revealed');
+  // Carrega o vídeo só agora (evita autoplay do kiosk antes do toque)
+  if (!leiaVideo.src) {
+    leiaVideo.src = leiaVideo.getAttribute('data-src');
+  }
   leiaVideo.currentTime = 0;
   leiaVideo.muted = false;
   leiaVideo.volume = 1;
@@ -550,6 +596,7 @@ function iniciarAtendimento() {
   window._cpfFallback = setTimeout(revelarCpf, 12000);
 }
 async function fazerCheckin() {
+  cancelarVolta();
   const cpfRaw = document.getElementById('cpf-input').value.replace(/\D/g,'');
   const cpfFmt = document.getElementById('cpf-input').value;
   const btn = document.getElementById('btn-checkin');
@@ -557,7 +604,9 @@ async function fazerCheckin() {
   const errEl = document.getElementById('error-msg');
   if (cpfRaw.length < 11) {
     errEl.textContent = 'Por favor, digite seu CPF completo (11 dígitos).';
-    errEl.classList.add('show'); return;
+    errEl.classList.add('show');
+    agendarVolta(); // reinicia o timer se o CPF estava incompleto
+    return;
   }
   errEl.classList.remove('show');
   btn.disabled = true; loader.classList.add('show');
@@ -589,25 +638,31 @@ async function fazerCheckin() {
         avatarEl.textContent = inicial;
       }
       showScreen('screen-welcome');
-      setTimeout(voltarInicio, 60000);
+      agendarVolta();
     } else {
       showScreen('screen-notfound');
-      setTimeout(voltarInicio, 30000);
+      agendarVolta();
     }
   } catch(err) {
     errEl.textContent = 'Erro de conexão. Verifique a internet e tente novamente.';
     errEl.classList.add('show');
+    agendarVolta();
   } finally {
     btn.disabled = false; loader.classList.remove('show');
   }
 }
 function voltarInicio() {
+  cancelarVolta();
   document.getElementById('cpf-input').value = '';
   document.getElementById('error-msg').classList.remove('show');
   document.getElementById('cpf-area').classList.remove('revealed');
   clearTimeout(window._cpfFallback);
-  // Reseta o vídeo
-  try { leiaVideo.pause(); leiaVideo.currentTime = 0; } catch(e) {}
+  // Para e descarrega o vídeo (evita que toque sozinho na tela de toque)
+  try {
+    leiaVideo.pause();
+    leiaVideo.removeAttribute('src');
+    leiaVideo.load();
+  } catch(e) {}
   showScreen('screen-tap');
 }
 // A tela começa na Tela 0 (toque). O foco no CPF acontece após o vídeo.
