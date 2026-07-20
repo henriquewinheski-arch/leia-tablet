@@ -60,6 +60,9 @@
   }
   .logo-bar svg { height: 22px; width: auto; }
   body.tela-tap .logo-bar { display: none; }
+  /* Bandeiras aparecem só na tela de toque */
+  .lang-flags { display: none; }
+  body.tela-tap .lang-flags { display: flex; }
   /* ── CARD ── */
   .card {
     background: rgba(45,8,93,0.35);
@@ -91,16 +94,82 @@
   #screen-tap {
     cursor: pointer;
   }
+  /* Bandeiras de idioma no canto superior esquerdo */
+  .lang-flags {
+    position: fixed;
+    top: 84px; left: 24px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    z-index: 200;
+  }
+  .lang-flags-row {
+    display: flex; gap: 10px;
+  }
+  .lang-hint {
+    font-size: 11px;
+    color: var(--lx-text-dim);
+    letter-spacing: 0.3px;
+    text-align: left;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .flag-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--lx-border-medium);
+    border-radius: 6px;
+    padding: 4px;
+    cursor: pointer;
+    line-height: 0;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .flag-btn:hover { background: rgba(255,255,255,0.18); }
+  .flag-btn:active { transform: scale(0.94); }
+  .flag-btn svg { border-radius: 3px; display: block; width: 26px; height: 20px; }
+  /* Tela bilíngue */
+  .bilingue-card { cursor: pointer; }
+  .bili-flags {
+    display: flex; justify-content: center; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .bili-flags svg { border-radius: 4px; }
+  .bili-block { margin: 0 auto; }
+  .bili-hello {
+    font-size: clamp(22px, 4.5vw, 30px);
+    font-weight: 700; color: #fff;
+    margin-bottom: 10px;
+  }
+  .bili-text {
+    font-size: clamp(15px, 3vw, 19px);
+    color: var(--lx-primary-lightest);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .bili-thanks {
+    font-size: clamp(14px, 2.6vw, 17px);
+    color: var(--lx-text-dim);
+    font-style: italic;
+  }
+  .bili-divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--lx-primary-pure), var(--lx-secondary-pure));
+    border-radius: 2px;
+    margin: 26px auto;
+  }
+  .bili-back {
+    margin-top: 30px;
+    font-size: 13px;
+    color: var(--lx-text-dimmer);
+    letter-spacing: 1px;
+  }
   .tap-logo {
     margin-bottom: 40px;
   }
   .tap-eyebrow {
-    font-size: clamp(17px, 3.2vw, 23px);
+    font-size: clamp(13px, 2.5vw, 16px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 4px;
     color: var(--lx-secondary-pure);
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
   .tap-logo svg { width: min(72vw, 340px); height: auto; }
   .tap-pulse-ring {
@@ -388,6 +457,17 @@
 </div>
 <!-- ════ TELA 0 — TOQUE PARA SER ATENDIDO ════ -->
 <div class="screen active" id="screen-tap" onclick="iniciarAtendimento()">
+  <div class="lang-flags" onclick="abrirBilingue(event)">
+    <div class="lang-flags-row">
+      <button class="flag-btn" aria-label="English / Español">
+        <svg viewBox="0 0 640 480" width="40" height="30"><path fill="#bd3d44" d="M0 0h640v480H0"/><path fill="#fff" d="M0 55.3h640v36.9H0zm0 73.9h640V166H0zm0 73.8h640v37H0zm0 74h640v36.9H0zm0 73.8h640v37H0zm0 73.9h640V535H0z" transform="translate(0 -18.5)"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/><g fill="#fff"><g id="us-s18"><g id="us-s9"><g id="us-s5"><g id="us-s4"><path id="us-s" d="M30.4 11l3.4 10.3h10.6l-8.6 6.3 3.3 10.3-8.7-6.4-8.6 6.3L25 27.6l-8.7-6.3h10.9z"/><use href="#us-s" y="51.7"/><use href="#us-s" y="103.4"/><use href="#us-s" y="155.1"/></g><use href="#us-s" y="206.8"/></g><use href="#us-s" x="30.4" y="25.9"/></g><use href="#us-s9" x="60.8"/></g><use href="#us-s18" x="121.6"/><use href="#us-s9" x="182.4"/><use href="#us-s5" x="243.2"/></g></svg>
+      </button>
+      <button class="flag-btn" aria-label="Español">
+        <svg viewBox="0 0 640 480" width="40" height="30"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/></svg>
+      </button>
+    </div>
+    <div class="lang-hint">Foreign visitor? Click here<br>¿Visitante extranjero? Clic aquí</div>
+  </div>
   <div class="tap-eyebrow">Recepção Digital</div>
   <div class="tap-logo">
     <svg width="280" height="42" viewBox="0 0 197 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -420,6 +500,31 @@
     </svg>
   </div>
   <div class="tap-title">Toque para ser atendido</div>
+</div>
+<!-- ════ TELA BILÍNGUE — INGLÊS / ESPANHOL ════ -->
+<div class="screen" id="screen-bilingue" onclick="voltarInicio()">
+  <div class="card bilingue-card">
+    <div class="bili-flags">
+      <svg viewBox="0 0 640 480" width="52" height="39"><path fill="#bd3d44" d="M0 0h640v480H0"/><path fill="#fff" d="M0 55.3h640v36.9H0zm0 73.9h640V166H0zm0 73.8h640v37H0zm0 74h640v36.9H0zm0 73.8h640v37H0zm0 73.9h640V535H0z" transform="translate(0 -18.5)"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/><g fill="#fff"><g id="b-s18"><g id="b-s9"><g id="b-s5"><g id="b-s4"><path id="b-s" d="M30.4 11l3.4 10.3h10.6l-8.6 6.3 3.3 10.3-8.7-6.4-8.6 6.3L25 27.6l-8.7-6.3h10.9z"/><use href="#b-s" y="51.7"/><use href="#b-s" y="103.4"/><use href="#b-s" y="155.1"/></g><use href="#b-s" y="206.8"/></g><use href="#b-s" x="30.4" y="25.9"/></g><use href="#b-s9" x="60.8"/></g><use href="#b-s18" x="121.6"/><use href="#b-s9" x="182.4"/><use href="#b-s5" x="243.2"/></g></svg>
+      <svg viewBox="0 0 640 480" width="52" height="39"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/></svg>
+    </div>
+
+    <div class="bili-block">
+      <div class="bili-hello">Hello, welcome to Logcomex</div>
+      <div class="bili-text">Please ring the bell and wait to be assisted.</div>
+      <div class="bili-thanks">Thank you.</div>
+    </div>
+
+    <div class="bili-divider"></div>
+
+    <div class="bili-block">
+      <div class="bili-hello">Hola, bienvenido a Logcomex</div>
+      <div class="bili-text">Por favor, toque el timbre y espere a ser atendido.</div>
+      <div class="bili-thanks">Gracias.</div>
+    </div>
+
+    <div class="bili-back">Toque para voltar · Tap to go back</div>
+  </div>
 </div>
 <!-- ════ TELA 1 — BOAS-VINDAS LÉIA ════ -->
 <div class="screen" id="screen-inicio">
@@ -570,6 +675,12 @@ function revelarCpf() {
   document.getElementById('cpf-area').classList.add('revealed');
   setTimeout(() => document.getElementById('cpf-input').focus(), 400);
   agendarVolta(); // inicia contagem de 20s (zera a cada tecla)
+}
+// Abre a tela bilíngue (impede que o clique dispare o atendimento em português)
+function abrirBilingue(ev) {
+  ev.stopPropagation();
+  showScreen('screen-bilingue');
+  agendarVolta(); // volta sozinho em 20s
 }
 // Toque na tela inicial → carrega o vídeo, vai para a tela e toca com som
 function iniciarAtendimento() {
