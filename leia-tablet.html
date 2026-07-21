@@ -63,6 +63,9 @@
   /* Bandeiras aparecem só na tela de toque */
   .lang-flags { display: none; }
   body.tela-tap .lang-flags { display: flex; }
+  /* Botão de ajuda aparece só na tela de toque */
+  .help-corner { display: none; }
+  body.tela-tap .help-corner { display: flex; }
   /* ── CARD ── */
   .card {
     background: rgba(45,8,93,0.35);
@@ -124,6 +127,34 @@
   .flag-btn:hover { background: rgba(255,255,255,0.18); }
   .flag-btn:active { transform: scale(0.94); }
   .flag-btn svg { border-radius: 3px; display: block; width: 26px; height: 20px; }
+  /* Botão "Precisa de ajuda?" no canto superior direito */
+  .help-corner {
+    position: fixed;
+    top: 84px; right: 24px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    z-index: 200;
+    cursor: pointer;
+  }
+  .help-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--lx-border-medium);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .help-btn:hover { background: rgba(255,255,255,0.18); }
+  .help-btn:active { transform: scale(0.94); }
+  .help-btn svg { width: 22px; height: 22px; color: var(--lx-secondary-pure); display: block; }
+  .help-hint {
+    font-size: 11px;
+    color: var(--lx-text-dim);
+    letter-spacing: 0.3px;
+    text-align: right;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
   /* Tela bilíngue */
   .bilingue-card { cursor: pointer; }
   .bili-flags {
@@ -168,8 +199,15 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 4px;
-    color: var(--lx-secondary-pure);
+    color: #fff;
     margin-bottom: 18px;
+  }
+  .tap-eyebrow span {
+    color: var(--lx-primary-darkest);
+    background: var(--lx-secondary-pure);
+    border-radius: 8px;
+    padding: 2px 10px;
+    margin-left: -6px;
   }
   .tap-logo svg { width: min(72vw, 340px); height: auto; }
   .tap-pulse-ring {
@@ -222,7 +260,13 @@
     margin-bottom: 8px;
     line-height: 1.15;
   }
-  .leia-name span { color: var(--lx-secondary-pure); }
+  .leia-name span {
+    color: var(--lx-primary-darkest);
+    background: var(--lx-secondary-pure);
+    border-radius: 12px;
+    padding: 2px 14px;
+    margin-left: 0px;
+  }
   .leia-desc {
     font-size: clamp(14px, 3vw, 16px);
     color: var(--lx-text-dim);
@@ -316,6 +360,40 @@
     animation: scaleIn 0.5s var(--ease-out) both;
   }
   .checkin-icon svg { width: 28px; height: 28px; color: #4ADE80; }
+  .checkin-video-wrap {
+    width: 100%;
+    max-width: 660px;
+    margin: 0 auto 22px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--lx-border-medium);
+    box-shadow: 0 6px 30px rgba(102,19,208,0.3);
+    background: rgba(255,255,255,0.04);
+    line-height: 0;
+    animation: scaleIn 0.5s var(--ease-out) both;
+  }
+  .checkin-video-wrap video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Vídeo das telas de idioma (inglês/espanhol) */
+  .lang-video-wrap {
+    width: 100%;
+    max-width: 660px;
+    margin: 0 auto 20px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--lx-border-medium);
+    box-shadow: 0 8px 40px rgba(102,19,208,0.35);
+    background: rgba(255,255,255,0.04);
+    line-height: 0;
+  }
+  .lang-video-wrap video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
   @keyframes scaleIn {
     from { transform: scale(0.4); opacity: 0; }
     to   { transform: scale(1); opacity: 1; }
@@ -329,7 +407,14 @@
   .welcome-name {
     font-size: clamp(24px, 6vw, 36px);
     font-weight: 700; color: #fff;
-    margin-bottom: 6px; line-height: 1.2;
+    margin-bottom: 6px; line-height: 1.3;
+  }
+  .welcome-name span {
+    color: var(--lx-primary-darkest);
+    background: var(--lx-secondary-pure);
+    border-radius: 12px;
+    padding: 2px 14px;
+    display: inline-block;
   }
   .welcome-empresa {
     font-size: clamp(13px, 2.5vw, 15px);
@@ -457,18 +542,27 @@
 </div>
 <!-- ════ TELA 0 — TOQUE PARA SER ATENDIDO ════ -->
 <div class="screen active" id="screen-tap" onclick="iniciarAtendimento()">
-  <div class="lang-flags" onclick="abrirBilingue(event)">
+  <div class="lang-flags">
     <div class="lang-flags-row">
-      <button class="flag-btn" aria-label="English / Español">
+      <button class="flag-btn" aria-label="English" onclick="abrirIdioma(event, 'ingles')">
         <svg viewBox="0 0 640 480" width="40" height="30"><path fill="#bd3d44" d="M0 0h640v480H0"/><path fill="#fff" d="M0 55.3h640v36.9H0zm0 73.9h640V166H0zm0 73.8h640v37H0zm0 74h640v36.9H0zm0 73.8h640v37H0zm0 73.9h640V535H0z" transform="translate(0 -18.5)"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/><g fill="#fff"><g id="us-s18"><g id="us-s9"><g id="us-s5"><g id="us-s4"><path id="us-s" d="M30.4 11l3.4 10.3h10.6l-8.6 6.3 3.3 10.3-8.7-6.4-8.6 6.3L25 27.6l-8.7-6.3h10.9z"/><use href="#us-s" y="51.7"/><use href="#us-s" y="103.4"/><use href="#us-s" y="155.1"/></g><use href="#us-s" y="206.8"/></g><use href="#us-s" x="30.4" y="25.9"/></g><use href="#us-s9" x="60.8"/></g><use href="#us-s18" x="121.6"/><use href="#us-s9" x="182.4"/><use href="#us-s5" x="243.2"/></g></svg>
       </button>
-      <button class="flag-btn" aria-label="Español">
+      <button class="flag-btn" aria-label="Español" onclick="abrirIdioma(event, 'espanhol')">
         <svg viewBox="0 0 640 480" width="40" height="30"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/></svg>
       </button>
     </div>
-    <div class="lang-hint">Foreign visitor? Click here<br>¿Visitante extranjero? Clic aquí</div>
+    <div class="lang-hint">Foreign visitor? Click the flag<br>¿Visitante extranjero? Clic en la bandera</div>
   </div>
-  <div class="tap-eyebrow">Recepção Digital</div>
+  <div class="help-corner" onclick="pedirAjuda(event)">
+    <div class="help-btn" aria-label="Precisa de ajuda?">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </div>
+    <div class="help-hint">Precisa de ajuda?<br>Clique aqui</div>
+  </div>
+  <div class="tap-eyebrow">Recepção <span>Digital</span></div>
   <div class="tap-logo">
     <svg width="280" height="42" viewBox="0 0 197 30" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M170.124 20.0846H167.091V23.1403H170.124V20.0846Z" fill="white"/>
@@ -502,28 +596,40 @@
   <div class="tap-title">Toque para ser atendido</div>
 </div>
 <!-- ════ TELA BILÍNGUE — INGLÊS / ESPANHOL ════ -->
-<div class="screen" id="screen-bilingue" onclick="voltarInicio()">
-  <div class="card bilingue-card">
-    <div class="bili-flags">
-      <svg viewBox="0 0 640 480" width="52" height="39"><path fill="#bd3d44" d="M0 0h640v480H0"/><path fill="#fff" d="M0 55.3h640v36.9H0zm0 73.9h640V166H0zm0 73.8h640v37H0zm0 74h640v36.9H0zm0 73.8h640v37H0zm0 73.9h640V535H0z" transform="translate(0 -18.5)"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/><g fill="#fff"><g id="b-s18"><g id="b-s9"><g id="b-s5"><g id="b-s4"><path id="b-s" d="M30.4 11l3.4 10.3h10.6l-8.6 6.3 3.3 10.3-8.7-6.4-8.6 6.3L25 27.6l-8.7-6.3h10.9z"/><use href="#b-s" y="51.7"/><use href="#b-s" y="103.4"/><use href="#b-s" y="155.1"/></g><use href="#b-s" y="206.8"/></g><use href="#b-s" x="30.4" y="25.9"/></g><use href="#b-s9" x="60.8"/></g><use href="#b-s18" x="121.6"/><use href="#b-s9" x="182.4"/><use href="#b-s5" x="243.2"/></g></svg>
-      <svg viewBox="0 0 640 480" width="52" height="39"><path fill="#c60b1e" d="M0 0h640v480H0z"/><path fill="#ffc400" d="M0 120h640v240H0z"/></svg>
+<!-- ════ TELA VÍDEO INGLÊS ════ -->
+<div class="screen" id="screen-ingles" onclick="voltarInicio()">
+  <div class="card">
+    <div class="lang-video-wrap">
+      <video id="video-ingles" playsinline muted preload="none" data-src="leia-ingles.mp4"></video>
     </div>
-
-    <div class="bili-block">
-      <div class="bili-hello">Hello, welcome to Logcomex</div>
-      <div class="bili-text">Please ring the bell and wait to be assisted.</div>
-      <div class="bili-thanks">Thank you.</div>
+    <div class="bili-back">Tap anywhere to go back</div>
+  </div>
+</div>
+<!-- ════ TELA VÍDEO ESPANHOL ════ -->
+<div class="screen" id="screen-espanhol" onclick="voltarInicio()">
+  <div class="card">
+    <div class="lang-video-wrap">
+      <video id="video-espanhol" playsinline muted preload="none" data-src="leia-espanhol.mp4"></video>
     </div>
-
-    <div class="bili-divider"></div>
-
-    <div class="bili-block">
-      <div class="bili-hello">Hola, bienvenido a Logcomex</div>
-      <div class="bili-text">Por favor, toque el timbre y espere a ser atendido.</div>
-      <div class="bili-thanks">Gracias.</div>
+    <div class="bili-back">Toque en cualquier lugar para volver</div>
+  </div>
+</div>
+<!-- ════ TELA AJUDA SOLICITADA ════ -->
+<div class="screen" id="screen-ajuda" onclick="voltarInicio()">
+  <div class="card">
+    <div class="checkin-icon" style="background:rgba(254,143,28,0.12);border-color:rgba(254,143,28,0.35)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FE8F1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
     </div>
-
-    <div class="bili-back">Toque para voltar · Tap to go back</div>
+    <div class="welcome-greeting">Ajuda solicitada</div>
+    <div class="welcome-name" style="font-size:clamp(22px,5vw,32px)">Já avisamos nossa equipe</div>
+    <div class="welcome-msg" style="margin-top:14px">
+      Aguarde um momento, por favor.<br>
+      Um colaborador virá até a recepção para ajudá-lo em instantes.
+    </div>
+    <button class="btn-ghost" onclick="voltarInicio()">← Voltar ao início</button>
   </div>
 </div>
 <!-- ════ TELA 1 — BOAS-VINDAS LÉIA ════ -->
@@ -561,13 +667,11 @@
 <!-- ════ TELA 2 — CHECK-IN CONFIRMADO ════ -->
 <div class="screen" id="screen-welcome">
   <div class="card">
-    <div class="checkin-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
+    <div class="checkin-video-wrap">
+      <video id="video-checkin" playsinline muted preload="none" data-src="leia-checkin.mp4"></video>
     </div>
     <div class="welcome-greeting">Check-in realizado</div>
-    <div class="welcome-name" id="welcome-name">Olá!</div>
+    <div class="welcome-name" id="welcome-name">Olá</div>
     <div class="welcome-empresa" id="welcome-empresa-visitante"></div>
     <div class="welcome-msg">
       Seja muito bem-vindo(a) à <strong style="color:#fff">Logcomex</strong>.<br>
@@ -669,6 +773,37 @@ function showScreen(id) {
   window.scrollTo(0,0);
 }
 const leiaVideo = document.getElementById('leia-video');
+// Vídeo da LÉIA na confirmação de check-in
+const videoCheckin = document.getElementById('video-checkin');
+function tocarAudioCheckin() {
+  try {
+    if (!videoCheckin.src) {
+      videoCheckin.src = videoCheckin.getAttribute('data-src');
+    }
+    videoCheckin.currentTime = 0;
+    videoCheckin.muted = false;
+    videoCheckin.volume = 1;
+    // Espera o vídeo carregar antes de tocar (garante o som)
+    const tentarTocar = () => {
+      videoCheckin.muted = false;
+      videoCheckin.volume = 1;
+      const p = videoCheckin.play();
+      if (p) {
+        p.catch(() => {
+          // Se o navegador bloquear com som, tenta mudo (ao menos mostra a imagem)
+          videoCheckin.muted = true;
+          videoCheckin.play().catch(() => {});
+        });
+      }
+    };
+    if (videoCheckin.readyState >= 3) {
+      tentarTocar();
+    } else {
+      videoCheckin.addEventListener('canplay', tentarTocar, { once: true });
+      videoCheckin.load();
+    }
+  } catch(e) {}
+}
 // Quando o vídeo terminar de falar, revela o campo de CPF
 leiaVideo.addEventListener('ended', revelarCpf);
 function revelarCpf() {
@@ -676,11 +811,43 @@ function revelarCpf() {
   setTimeout(() => document.getElementById('cpf-input').focus(), 400);
   agendarVolta(); // inicia contagem de 20s (zera a cada tecla)
 }
-// Abre a tela bilíngue (impede que o clique dispare o atendimento em português)
-function abrirBilingue(ev) {
+// Abre a tela do idioma escolhido e toca o vídeo (EN ou ES), com som
+const videoIngles = document.getElementById('video-ingles');
+const videoEspanhol = document.getElementById('video-espanhol');
+function abrirIdioma(ev, idioma) {
   ev.stopPropagation();
-  showScreen('screen-bilingue');
+  const tela = idioma === 'ingles' ? 'screen-ingles' : 'screen-espanhol';
+  const vid = idioma === 'ingles' ? videoIngles : videoEspanhol;
+  showScreen(tela);
   agendarVolta(); // volta sozinho em 20s
+  try {
+    if (!vid.src) { vid.src = vid.getAttribute('data-src'); }
+    vid.currentTime = 0;
+    vid.muted = false;
+    vid.volume = 1;
+    const tentar = () => {
+      vid.muted = false; vid.volume = 1;
+      const p = vid.play();
+      if (p) { p.catch(() => { vid.muted = true; vid.play().catch(()=>{}); }); }
+    };
+    if (vid.readyState >= 3) { tentar(); }
+    else { vid.addEventListener('canplay', tentar, { once: true }); vid.load(); }
+  } catch(e) {}
+}
+// Pedido de ajuda: avisa o facilities no Slack e mostra a tela de confirmação
+const WEBHOOK_AJUDA = 'https://ramonlogcomex.app.n8n.cloud/webhook/leia-ajuda';
+function pedirAjuda(ev) {
+  ev.stopPropagation();
+  showScreen('screen-ajuda');
+  agendarVolta(); // volta sozinho em 20s
+  // Dispara o aviso ao facilities (não bloqueia a tela; se falhar, a tela já mostrou confirmação)
+  try {
+    fetch(WEBHOOK_AJUDA, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ ajuda: true, origem: 'tablet-recepcao' })
+    }).catch(() => {});
+  } catch(e) {}
 }
 // Toque na tela inicial → carrega o vídeo, vai para a tela e toca com som
 function iniciarAtendimento() {
@@ -730,7 +897,8 @@ async function fazerCheckin() {
     if (data.encontrado) {
       // Nome — primeiro nome
       const primeiroNome = (data.nome_visitante||'').split(' ')[0];
-      document.getElementById('welcome-name').textContent = 'Olá, ' + primeiroNome + '!';
+      const nomeSeguro = primeiroNome.replace(/[<>&]/g, '');
+      document.getElementById('welcome-name').innerHTML = 'Olá, <span>' + nomeSeguro + '</span>';
       // Empresa do visitante
       const empEl = document.getElementById('welcome-empresa-visitante');
       empEl.textContent = data.empresa_visitante || '';
@@ -748,6 +916,7 @@ async function fazerCheckin() {
         avatarEl.textContent = inicial;
       }
       showScreen('screen-welcome');
+      tocarAudioCheckin();
       agendarVolta();
     } else {
       showScreen('screen-notfound');
@@ -772,6 +941,19 @@ function voltarInicio() {
     leiaVideo.pause();
     leiaVideo.removeAttribute('src');
     leiaVideo.load();
+  } catch(e) {}
+  // Para o vídeo de check-in, se estiver tocando
+  try {
+    videoCheckin.pause();
+    videoCheckin.removeAttribute('src');
+    videoCheckin.load();
+  } catch(e) {}
+  // Para os vídeos de idioma (inglês/espanhol), se estiverem tocando
+  try {
+    videoIngles.pause(); videoIngles.removeAttribute('src'); videoIngles.load();
+  } catch(e) {}
+  try {
+    videoEspanhol.pause(); videoEspanhol.removeAttribute('src'); videoEspanhol.load();
   } catch(e) {}
   showScreen('screen-tap');
 }
