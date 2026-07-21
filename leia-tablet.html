@@ -766,12 +766,12 @@
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
     </div>
-    <div class="welcome-greeting" style="margin-bottom:8px">Cadastro não encontrado</div>
-    <div class="welcome-msg" style="margin-bottom:24px">
+    <div class="welcome-greeting" id="notfound-title" style="margin-bottom:8px">Cadastro não encontrado</div>
+    <div class="welcome-msg" id="notfound-msg" style="margin-bottom:24px">
       Não localizamos seu CPF na lista de visitantes esperados.<br>
       Nossa equipe de Facilities irá atendê-lo(a) em instantes.
     </div>
-    <div class="status-bar warn">
+    <div class="status-bar warn" id="notfound-status">
       <div class="pulse-dot"></div>
       <span>Aguarde — a equipe foi notificada e virá até você.</span>
     </div>
@@ -1002,6 +1002,17 @@ async function fazerCheckin() {
       tocarAudioCheckin();
       agendarVolta();
     } else {
+      const msg = data.mensagem || '';
+      const diaErrado = msg.includes('outro dia');
+      if (diaErrado) {
+        document.getElementById('notfound-title').textContent = 'Visita em outro dia';
+        document.getElementById('notfound-msg').innerHTML = msg;
+        document.getElementById('notfound-status').style.display = 'none';
+      } else {
+        document.getElementById('notfound-title').textContent = 'Cadastro não encontrado';
+        document.getElementById('notfound-msg').innerHTML = 'Não localizamos seu CPF na lista de visitantes esperados.<br>Nossa equipe de Facilities irá atendê-lo(a) em instantes.';
+        document.getElementById('notfound-status').style.display = '';
+      }
       showScreen('screen-notfound');
       agendarVolta();
     }
