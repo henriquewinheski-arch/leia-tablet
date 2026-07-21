@@ -242,7 +242,7 @@
     transition: max-height 0.5s var(--ease-out), opacity 0.5s var(--ease-out);
   }
   .cpf-area.revealed {
-    max-height: 400px;
+    max-height: 640px;
     opacity: 1;
   }
   .leia-greeting {
@@ -313,6 +313,49 @@
     border-color: var(--lx-secondary-pure);
     background: rgba(255,255,255,0.1);
   }
+  /* ── TECLADO NUMÉRICO PRÓPRIO ── */
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .keypad button {
+    height: 56px;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid var(--lx-border-medium);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .keypad button:active {
+    background: rgba(255,255,255,0.16);
+    transform: scale(0.95);
+  }
+  .keypad button svg { width: 22px; height: 22px; }
+  .keypad-clear {
+    color: #FEB366 !important;
+    font-size: 18px !important;
+  }
+  .keypad-back {
+    color: var(--lx-secondary-pure) !important;
+  }
+  .keypad-confirm {
+    grid-column: span 3;
+    background: var(--lx-secondary-pure) !important;
+    color: var(--lx-primary-darkest) !important;
+    border: none !important;
+    font-size: 16px !important;
+    gap: 8px;
+  }
+  .keypad-confirm svg { width: 20px; height: 20px; }
+  .keypad-confirm:active { background: var(--lx-secondary-pure) !important; opacity: 0.85; }
+  .keypad-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
   /* ── BOTÃO PRIMARY ── */
   .btn-primary {
     width: 100%; height: 56px;
@@ -650,15 +693,39 @@
       <input
         class="input-cpf"
         id="cpf-input"
-        type="tel"
-        inputmode="numeric"
+        type="text"
+        inputmode="none"
+        readonly
         maxlength="14"
         placeholder="000.000.000-00"
         autocomplete="off"
       />
-      <button class="btn-primary" id="btn-checkin" onclick="fazerCheckin()">
-        Confirmar check-in
-      </button>
+      <div class="keypad" id="keypad">
+        <button type="button" onclick="digitarCPF('1')">1</button>
+        <button type="button" onclick="digitarCPF('2')">2</button>
+        <button type="button" onclick="digitarCPF('3')">3</button>
+        <button type="button" onclick="digitarCPF('4')">4</button>
+        <button type="button" onclick="digitarCPF('5')">5</button>
+        <button type="button" onclick="digitarCPF('6')">6</button>
+        <button type="button" onclick="digitarCPF('7')">7</button>
+        <button type="button" onclick="digitarCPF('8')">8</button>
+        <button type="button" onclick="digitarCPF('9')">9</button>
+        <button type="button" class="keypad-clear" onclick="limparCPF()">C</button>
+        <button type="button" onclick="digitarCPF('0')">0</button>
+        <button type="button" class="keypad-back" onclick="apagarCPF()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/>
+            <line x1="18" y1="9" x2="12" y2="15"/>
+            <line x1="12" y1="9" x2="18" y2="15"/>
+          </svg>
+        </button>
+        <button type="button" id="btn-checkin" class="keypad-confirm" onclick="fazerCheckin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Confirmar
+        </button>
+      </div>
       <div class="loader" id="loader"></div>
       <div class="error-msg" id="error-msg"></div>
     </div>
@@ -746,20 +813,37 @@ function cancelarVolta() {
   clearTimeout(timerInatividade);
 }
 
-// Máscara CPF + som de clique + reinicia timer a cada tecla
-document.getElementById('cpf-input').addEventListener('input', function(e) {
-  let v = e.target.value.replace(/\D/g,'');
+// Aplica a máscara de CPF a partir dos dígitos puros
+function aplicarMascaraCPF(v) {
   if (v.length > 11) v = v.slice(0,11);
-  if (v.length > 9) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
-  else if (v.length > 6) v = v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
-  else if (v.length > 3) v = v.slice(0,3)+'.'+v.slice(3);
-  e.target.value = v;
+  if (v.length > 9) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6,9)+'-'+v.slice(9);
+  if (v.length > 6) return v.slice(0,3)+'.'+v.slice(3,6)+'.'+v.slice(6);
+  if (v.length > 3) return v.slice(0,3)+'.'+v.slice(3);
+  return v;
+}
+// Teclado numérico próprio: digitar, apagar e limpar
+function digitarCPF(digito) {
+  const input = document.getElementById('cpf-input');
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 11) return;
+  v += digito;
+  input.value = aplicarMascaraCPF(v);
   tocarClique();
   agendarVolta(); // zera o timer a cada tecla digitada
-});
-document.getElementById('cpf-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') fazerCheckin();
-});
+}
+function apagarCPF() {
+  const input = document.getElementById('cpf-input');
+  let v = input.value.replace(/\D/g,'');
+  v = v.slice(0, -1);
+  input.value = aplicarMascaraCPF(v);
+  tocarClique();
+  agendarVolta();
+}
+function limparCPF() {
+  document.getElementById('cpf-input').value = '';
+  tocarClique();
+  agendarVolta();
+}
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -808,7 +892,6 @@ function tocarAudioCheckin() {
 leiaVideo.addEventListener('ended', revelarCpf);
 function revelarCpf() {
   document.getElementById('cpf-area').classList.add('revealed');
-  setTimeout(() => document.getElementById('cpf-input').focus(), 400);
   agendarVolta(); // inicia contagem de 20s (zera a cada tecla)
 }
 // Abre a tela do idioma escolhido e toca o vídeo (EN ou ES), com som
