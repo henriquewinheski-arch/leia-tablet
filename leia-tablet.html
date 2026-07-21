@@ -437,6 +437,47 @@
     height: auto;
     display: block;
   }
+  /* Sino de campainha (telas de idioma estrangeiro) */
+  .bell-area {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+    transition: max-height 0.5s var(--ease-out), opacity 0.5s var(--ease-out);
+  }
+  .bell-area.revealed {
+    max-height: 220px;
+    opacity: 1;
+    margin-top: 22px;
+  }
+  .bell-pulse-ring {
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: var(--lx-secondary-pure);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(254,143,28,0.5);
+    animation: bellPulse 1.8s ease-out infinite;
+    transition: background 0.3s;
+  }
+  .bell-pulse-ring svg { width: 34px; height: 34px; color: #fff; }
+  .bell-pulse-ring:active { transform: scale(0.95); }
+  .bell-pulse-ring.enviado {
+    background: #4ADE80;
+    animation: none;
+    box-shadow: none;
+  }
+  @keyframes bellPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(254,143,28,0.45); }
+    70%  { box-shadow: 0 0 0 28px rgba(254,143,28,0); }
+    100% { box-shadow: 0 0 0 0 rgba(254,143,28,0); }
+  }
+  .bell-caption {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--lx-text-dim);
+    text-align: center;
+  }
   @keyframes scaleIn {
     from { transform: scale(0.4); opacity: 0; }
     to   { transform: scale(1); opacity: 1; }
@@ -645,6 +686,17 @@
     <div class="lang-video-wrap">
       <video id="video-ingles" playsinline muted preload="none" data-src="leia-ingles.mp4"></video>
     </div>
+    <div class="bell-area" id="bell-area-en">
+      <div class="bell-pulse-ring" id="bell-btn-en" onclick="tocarCampainha(event, 'en')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 21a2 2 0 0 0 4 0"/>
+          <path d="M3.2 10.5a8.8 8.8 0 0 1 3.8-7"/>
+          <path d="M20.8 10.5a8.8 8.8 0 0 0-3.8-7"/>
+          <path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/>
+        </svg>
+      </div>
+      <div class="bell-caption" id="bell-caption-en">Tap the bell to ring reception</div>
+    </div>
     <div class="bili-back">Tap anywhere to go back</div>
   </div>
 </div>
@@ -653,6 +705,17 @@
   <div class="card">
     <div class="lang-video-wrap">
       <video id="video-espanhol" playsinline muted preload="none" data-src="leia-espanhol.mp4"></video>
+    </div>
+    <div class="bell-area" id="bell-area-es">
+      <div class="bell-pulse-ring" id="bell-btn-es" onclick="tocarCampainha(event, 'es')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 21a2 2 0 0 0 4 0"/>
+          <path d="M3.2 10.5a8.8 8.8 0 0 1 3.8-7"/>
+          <path d="M20.8 10.5a8.8 8.8 0 0 0-3.8-7"/>
+          <path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/>
+        </svg>
+      </div>
+      <div class="bell-caption" id="bell-caption-es">Toque la campana para llamar</div>
     </div>
     <div class="bili-back">Toque en cualquier lugar para volver</div>
   </div>
@@ -901,8 +964,11 @@ function abrirIdioma(ev, idioma) {
   ev.stopPropagation();
   const tela = idioma === 'ingles' ? 'screen-ingles' : 'screen-espanhol';
   const vid = idioma === 'ingles' ? videoIngles : videoEspanhol;
+  const bellId = idioma === 'ingles' ? 'bell-area-en' : 'bell-area-es';
   showScreen(tela);
   agendarVolta(); // volta sozinho em 20s
+  // Sino aparece imediatamente, junto com o vídeo (não espera o fim da fala)
+  document.getElementById(bellId).classList.add('revealed');
   try {
     if (!vid.src) { vid.src = vid.getAttribute('data-src'); }
     vid.currentTime = 0;
@@ -915,6 +981,61 @@ function abrirIdioma(ev, idioma) {
     };
     if (vid.readyState >= 3) { tentar(); }
     else { vid.addEventListener('canplay', tentar, { once: true }); vid.load(); }
+  } catch(e) {}
+}
+// Campainha: toca som no tablet e avisa facilities + Henrique no Slack
+const WEBHOOK_CAMPAINHA = 'https://ramonlogcomex.app.n8n.cloud/webhook/leia-campainha';
+function tocarCampainha(ev, idioma) {
+  ev.stopPropagation();
+  const btn = document.getElementById('bell-btn-' + idioma);
+  // Som de campainha (ding-dong) sintetizado com harmônicos, imitando timbre de sino real
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Cada nota é composta de vários "parciais" (harmônicos), como um sino de verdade,
+    // em vez de uma onda pura (que soa como um "bip" eletrônico).
+    const parciais = [
+      { mult: 1,    ganho: 1.0  },
+      { mult: 2.0,  ganho: 0.5  },
+      { mult: 2.76, ganho: 0.28 },
+      { mult: 4.2,  ganho: 0.14 }
+    ];
+    const tocarNota = (freqBase, duracao, atraso, volume) => {
+      setTimeout(() => {
+        parciais.forEach(p => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.value = freqBase * p.mult;
+          const vol = volume * p.ganho;
+          g.gain.setValueAtTime(vol, audioCtx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duracao);
+          o.connect(g); g.connect(audioCtx.destination);
+          o.start();
+          o.stop(audioCtx.currentTime + duracao);
+        });
+      }, atraso);
+    };
+    // Toque de campainha repetido (ding-dong... ding-dong... ding-dong), com timbre de sino
+    const volume = 0.22;
+    for (let rep = 0; rep < 3; rep++) {
+      const base = rep * 1000;
+      tocarNota(784, 0.9, base, volume);         // "ding"
+      tocarNota(659, 1.1, base + 420, volume);   // "dong"
+    }
+  } catch(e) {}
+  // Feedback visual: sino fica verde por alguns segundos
+  if (btn) {
+    btn.classList.add('enviado');
+    setTimeout(() => btn.classList.remove('enviado'), 3500);
+  }
+  agendarVolta();
+  // Avisa facilities + Henrique no Slack (não bloqueia a experiência se falhar)
+  try {
+    fetch(WEBHOOK_CAMPAINHA, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ campainha: true, idioma })
+    }).catch(() => {});
   } catch(e) {}
 }
 // Pedido de ajuda: avisa o facilities no Slack e mostra a tela de confirmação
@@ -1030,6 +1151,9 @@ function voltarInicio() {
   document.getElementById('error-msg').classList.remove('show');
   document.getElementById('cpf-area').classList.remove('revealed');
   clearTimeout(window._cpfFallback);
+  clearTimeout(window._bellFallback);
+  document.getElementById('bell-area-en').classList.remove('revealed');
+  document.getElementById('bell-area-es').classList.remove('revealed');
   // Para e descarrega o vídeo (evita que toque sozinho na tela de toque)
   try {
     leiaVideo.pause();
