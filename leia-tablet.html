@@ -625,8 +625,8 @@
   </svg>
 </div>
 <!-- ════ TELA 0 — TOQUE PARA SER ATENDIDO ════ -->
-<div class="screen active" id="screen-tap" onclick="iniciarAtendimento()">
-  <div class="lang-flags">
+<div class="screen active" id="screen-tap">
+  <div class="lang-flags" onclick="event.stopPropagation()">
     <div class="lang-flags-row">
       <button class="flag-btn" aria-label="English" onclick="abrirIdioma(event, 'ingles')">
         <svg viewBox="0 0 640 480" width="40" height="30"><path fill="#bd3d44" d="M0 0h640v480H0"/><path fill="#fff" d="M0 55.3h640v36.9H0zm0 73.9h640V166H0zm0 73.8h640v37H0zm0 74h640v36.9H0zm0 73.8h640v37H0zm0 73.9h640V535H0z" transform="translate(0 -18.5)"/><path fill="#192f5d" d="M0 0h364.8v258.5H0"/><g fill="#fff"><g id="us-s18"><g id="us-s9"><g id="us-s5"><g id="us-s4"><path id="us-s" d="M30.4 11l3.4 10.3h10.6l-8.6 6.3 3.3 10.3-8.7-6.4-8.6 6.3L25 27.6l-8.7-6.3h10.9z"/><use href="#us-s" y="51.7"/><use href="#us-s" y="103.4"/><use href="#us-s" y="155.1"/></g><use href="#us-s" y="206.8"/></g><use href="#us-s" x="30.4" y="25.9"/></g><use href="#us-s9" x="60.8"/></g><use href="#us-s18" x="121.6"/><use href="#us-s9" x="182.4"/><use href="#us-s5" x="243.2"/></g></svg>
@@ -667,7 +667,7 @@
       <path fill-rule="evenodd" clip-rule="evenodd" d="M69.286 7.655H72.441V22.881C72.441 27.511 69.814 30 64.632 30C62.341 30 60.31 29.332 58.505 27.885L60.446 25.379C62.328 26.859 64.696 26.859 64.696 26.859C67.599 26.859 69.286 25.46 69.286 23.131V21.651C68.053 22.492 66.584 22.915 64.897 22.915C62.711 22.915 60.894 22.204 59.479 20.798C58.065 19.395 57.349 17.583 57.349 15.408C57.349 13.234 58.065 11.424 59.479 10.018C60.892 8.612 62.711 7.901 64.897 7.901C66.585 7.901 68.053 8.326 69.286 9.167V7.655ZM69.286 16.2C69.144 17.133 68.745 17.933 68.09 18.585C67.256 19.414 66.185 19.835 64.897 19.835C63.609 19.835 62.536 19.414 61.704 18.585C60.872 17.756 60.451 16.685 60.451 15.397C60.451 14.109 60.872 13.038 61.704 12.231C62.536 11.402 63.609 10.981 64.897 10.981C66.185 10.981 67.256 11.402 68.09 12.231C68.744 12.883 69.144 13.681 69.286 14.614V16.2Z" fill="white"/>
     </svg>
   </div>
-  <div class="tap-pulse-ring">
+  <div class="tap-pulse-ring" onclick="iniciarAtendimento()" style="cursor:pointer;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
       <path d="M11 12v-.5a1.5 1.5 0 0 1 3 0V12"/>
