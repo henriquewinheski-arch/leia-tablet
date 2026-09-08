@@ -1119,7 +1119,7 @@ async function fazerCheckin() {
       } else {
         avatarEl.textContent = inicial;
       }
-      showScreen('screen-welcome');
+      showScreen('screen-welcome'); fetch('http://172.16.20.20:8765').catch(()=>{});
       tocarAudioCheckin();
       agendarVolta();
     } else {
