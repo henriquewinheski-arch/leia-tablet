@@ -1119,7 +1119,7 @@ async function fazerCheckin() {
       } else {
         avatarEl.textContent = inicial;
       }
-      showScreen('screen-welcome'); fetch((new URLSearchParams(location.search).get('andar')==='1'?'http://172.16.40.33:9000/andar1':'http://172.16.20.154:9000')).catch(()=>{});
+      showScreen('screen-welcome'); fetch((new URLSearchParams(location.search).get('andar')==='1'?'http://172.16.20.154:9000/andar1':'http://172.16.20.154:9000')).catch(()=>{});
       tocarAudioCheckin();
       agendarVolta();
     } else {
